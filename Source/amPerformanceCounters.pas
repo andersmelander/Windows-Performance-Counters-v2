@@ -292,7 +292,7 @@ type
     FInstanceType: TPerformanceCounterInstanceType;
   strict private
     FNamedInstances: TDictionary<string, TPerformanceCounterInstance>;
-    FInstances: TList<TPerformanceCounterInstance>;
+    FInstances: TObjectList<TPerformanceCounterInstance>;
     FInstanceCounter: integer;
     FSingleInstance: TPerformanceCounterInstance; // Convenience & performance
     FCounterSetLayout: PPerformanceCounterSetLayout;
@@ -1267,7 +1267,7 @@ begin
   // Version is stored in ProviderName key in the format [ProviderName][Space][Version]
   if (FProviderName <> '') then
   begin
-    if (Copy(Result, 1, Length(FProviderName)) = FProviderName+' ') then
+    if (Result.StartsWith(FProviderName)) and (Result[Length(FProviderName)+1] = ' ') then // Result[Length(FProviderName)+1] is "safe" since strings always includes a terminating zero.
       Delete(Result, 1, Length(FProviderName)+1)
     else
       Result := '';
@@ -1390,7 +1390,7 @@ begin
 
   FProvider := AProvider;
 
-  FInstances := TList<TPerformanceCounterInstance>.Create;
+  FInstances := TObjectList<TPerformanceCounterInstance>.Create;
   FCounters := TPerformanceCounterCounterList.Create(Self);
 
   FName := AName;
